@@ -1,46 +1,28 @@
 ﻿Imports System.Collections.ObjectModel
+Imports MaterialDesignThemes.Wpf
 Imports WpfExamples
 
 Public Class MenuItemVM
     Inherits BaseVM
 
-    Private _children As ObservableCollection(Of MenuDTO)
-    Private _parent As ObservableCollection(Of MenuDTO)
-    Private _onSelected As ICommand
+
+    Private _MenuItems As ObservableCollection(Of MenuDTO)
 
     Public Sub New()
-        _parent = getParent()
-        _children = getChildren()
+        GetMenuItems()
+
     End Sub
 
-    Public Property Children As ObservableCollection(Of MenuDTO)
+
+    Public Property MenuItems As ObservableCollection(Of MenuDTO)
         Get
-            Return _children
+            Return _MenuItems
         End Get
-        Set(ByVal value As ObservableCollection(Of MenuDTO))
-            _children = value
-            OnPropertyChanged(NameOf(Children))
+        Set(value As ObservableCollection(Of MenuDTO))
+            _MenuItems = value
+            OnPropertyChanged(NameOf(MenuItems))
         End Set
     End Property
-    Public Property Parent As ObservableCollection(Of MenuDTO)
-        Get
-            Return _parent
-        End Get
-        Set(ByVal value As ObservableCollection(Of MenuDTO))
-            _parent = value
-            OnPropertyChanged(NameOf(Parent))
-        End Set
-    End Property
-
-    Public ReadOnly Property OnSelected As ICommand
-        Get
-            If _onSelected Is Nothing Then
-                _onSelected = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected)
-            End If
-            Return _onSelected
-        End Get
-    End Property
-
 
     Public Sub OnItemSelected(obj As Object)
         MessageBox.Show("Click vào éo nào" + obj.ToString)
@@ -50,19 +32,46 @@ Public Class MenuItemVM
         Return True
     End Function
 
-    Private Function GetParent()
-        Dim listObj = MenuDTO.GetAllMenuItems.Where(Function(x) x.Parent Is String.Empty Or x.Parent Is Nothing)
-        Dim pr As ObservableCollection(Of MenuDTO) = New ObservableCollection(Of MenuDTO)(listObj)
-        For Each i In pr
-            Debug.WriteLine(i.Header.ToString)
-        Next
-        Return pr
+    Private Sub GetMenuItems()
+        _MenuItems = New ObservableCollection(Of MenuDTO) From {
+            New MenuDTO With {
+                .Header = "Alpha",
+                .Command = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected),
+                .Icon = New PackIcon With {.Kind = PackIconKind.Home}
+        },
+            New MenuDTO With {
+                .Header = "Beta",
+                .Command = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected),
+                .SubMenu = New ObservableCollection(Of MenuDTO) From {
+                    New MenuDTO With {
+                        .Header = "Beta1",
+                        .Command = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected)
+                    },
+                    New MenuDTO With {
+                        .Header = "Beta2",
+                        .Command = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected),
+                        .SubMenu = New ObservableCollection(Of MenuDTO) From {
+                            New MenuDTO With {
+                                .Header = "Beta1a"
+                            },
+                            New MenuDTO With {
+                                .Header = "Beta1b"
+                            },
+                            New MenuDTO With {
+                                .Header = "Beta1c"
+                            }
+                        }
+                    },
+                    New MenuDTO With {
+                        .Header = "Beta3"
+                    }
+                }
+            },
+            New MenuDTO With {
+                .Header = "Gamma",
+                .Command = New RelayCommand(AddressOf OnItemSelected, AddressOf ItemCanBeSelected)
+            }
+        }
+    End Sub
 
-    End Function
-
-    Private Function GetChildren()
-        Dim listObj = MenuDTO.GetAllMenuItems.Where(Function(x) x.Parent IsNot Nothing)
-        Dim cr As ObservableCollection(Of MenuDTO) = New ObservableCollection(Of MenuDTO)(listObj)
-        Return cr
-    End Function
 End Class

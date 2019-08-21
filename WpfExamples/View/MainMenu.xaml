@@ -18,13 +18,17 @@
         <Style x:Key="MenuStyle" TargetType="{x:Type Menu}" BasedOn="{StaticResource MaterialDesignMenu}">
         </Style>
     </Window.Resources>
-  
+    <Window.DataContext>
+        <local:MenuItemVM/>
+    </Window.DataContext>
     <Grid>
         <DockPanel>
-            <Menu IsMainMenu="True" DockPanel.Dock="Top" ItemsSource="{Binding Parent}" Style="{StaticResource MaterialDesignMenu}" AutomationProperties.IsRowHeader="True" Cursor="Hand">
+            <Menu IsMainMenu="True" DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}" Style="{StaticResource MaterialDesignMenu}" AutomationProperties.IsRowHeader="True" Cursor="Hand">
                 <Menu.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}">
                         <Setter Property="Command" Value="{Binding Command}" />
+                        <Setter Property="CommandParameter" Value="{Binding Header}" />
+                        <Setter Property="Icon" Value="{Binding Icon}" />
                     </Style>
                 </Menu.ItemContainerStyle>
                 <Menu.ItemTemplate>
