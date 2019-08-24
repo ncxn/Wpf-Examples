@@ -122,9 +122,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper\BindingProxy.vb" />
+    <Compile Include="Helper\BoolToContentConverter.vb" />
     <Compile Include="Helper\DBConnection.vb" />
     <Compile Include="Helper\DBHelper.vb" />
     <Compile Include="Helper\DBUtils.vb" />
+    <Compile Include="Helper\MyBooleanToVisibilityConverter.vb" />
     <Compile Include="Model\MenuDTO.vb" />
     <Compile Include="ViemModel\BaseVM.vb" />
     <Compile Include="ViemModel\MenuItemVM.vb" />

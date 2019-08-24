@@ -15,29 +15,36 @@
         mc:Ignorable="d"
         Title="MainMenu" Height="450" Width="800">
     <Window.Resources>
-        <Style x:Key="MenuStyle" TargetType="{x:Type Menu}" BasedOn="{StaticResource MaterialDesignMenu}">
-        </Style>
+        <ResourceDictionary>
+            <materialDesign:BooleanToVisibilityConverter x:Key="BtV"></materialDesign:BooleanToVisibilityConverter>
+            <local:MyBoolToVisibilityConverter x:Key="B2V"></local:MyBoolToVisibilityConverter>
+            <!--<local:BindingProxy x:Key="IsRole" Data="{DynamicResource MyBooleanToVisibilityConverter}"></local:BindingProxy>-->
+        </ResourceDictionary>
     </Window.Resources>
     <Window.DataContext>
         <local:MenuItemVM/>
     </Window.DataContext>
     <Grid>
         <DockPanel>
-            <Menu IsMainMenu="True" DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}" Style="{StaticResource MaterialDesignMenu}" AutomationProperties.IsRowHeader="True" Cursor="Hand">
+            <Menu IsMainMenu="True" DockPanel.Dock="Top" ItemsSource="{Binding MenuItems,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource MaterialDesignMenu}" AutomationProperties.IsRowHeader="True" Cursor="Hand">
                 <Menu.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource MaterialDesignMenuItem}">
                         <Setter Property="Command" Value="{Binding Command}" />
-                        <Setter Property="CommandParameter" Value="{Binding Header}" />
-                        <Setter Property="Icon" Value="{Binding Icon}" />
+                        <Setter Property="CommandParameter" Value="{Binding Name}" />
+                        <Setter Property="Visibility" Value="{Binding Role, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BtV}}" />
                     </Style>
                 </Menu.ItemContainerStyle>
                 <Menu.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:MenuDTO}" ItemsSource="{Binding Path=SubMenu}">
-                        <TextBlock Text="{Binding Header}"/>
+                    <HierarchicalDataTemplate DataType="{x:Type local:MenuItemVM}" ItemsSource="{Binding Path=SubMenu,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Margin="0,5,0,0" Kind="{Binding Icon}" /><Label Content="{Binding Header}" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                 </Menu.ItemTemplate>
             </Menu>
         </DockPanel>
-
+        <Button DataContext="{Binding MenuDTO}" Click="Button_Click" Content="{Binding Role,  UpdateSourceTrigger=PropertyChanged}">
+            
+        </Button>
     </Grid>
 </Window>

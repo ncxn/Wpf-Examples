@@ -1,13 +1,18 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Data
-Imports WpfExamples
+
 
 Public Class MenuDTO
+    Private _name As String
     Private _Header As String
     Private _Icon As Object
     Private _Parent As String
     Private _Command As ICommand
-    Private _subMenu As ObservableCollection(Of MenuDTO)
+    Private _role As Boolean
+    Public Sub New()
+
+    End Sub
+
     Public Property Header As String
         Get
             Return _Header
@@ -33,16 +38,6 @@ Public Class MenuDTO
         End Set
     End Property
 
-    Public Property SubMenu As ObservableCollection(Of MenuDTO)
-        Get
-            Return _subMenu
-        End Get
-        Set(value As ObservableCollection(Of MenuDTO))
-            _subMenu = value
-
-        End Set
-    End Property
-
     Public Property Icon As Object
         Get
             Return _Icon
@@ -52,26 +47,44 @@ Public Class MenuDTO
         End Set
     End Property
 
-    Public Shared Function GetAllMenuItems() As List(Of MenuDTO)
+    Public Property Name As String
+        Get
+            Return _name
+        End Get
+        Set(value As String)
+            _name = value
+        End Set
+    End Property
+
+    Public Property Role As Boolean
+        Get
+            Return _role
+        End Get
+        Set(value As Boolean)
+            _role = value
+
+        End Set
+    End Property
+
+    Public Shared Function GetAllMenuItems() As IEnumerable(Of MenuDTO)
 
         Dim dt As DataTable = DBHelper.GetInstance.GetDataTable("procGetAllControlsWithTypeMenu", CommandType.StoredProcedure)
         Dim allItems As List(Of MenuDTO) = (From dr As DataRow In dt.Rows Select New MenuDTO With {
-                                                                              .
-        .Header = dr(1),
-                .Parent = dr(2).ToString()
+            .Name = dr(0),
+            .Header = dr(1),
+            .Parent = dr(2).ToString(),
+            .Icon = "FileTree"
             }).ToList()
+
         Return allItems
     End Function
-    Private Sub SurroundingSub()
-        Dim allItems As List(Of MenuDTO) = GetAllMenuItems()
-        Dim parent = allItems.Where(Function(pi) pi.Header = item.Parent).SingleOrDefault()
-
-        If parent Is Nothing Then
-                pageItems.Add(item)
-            Else
-                If parent.Childs Is Nothing Then parent.Childs = New List(Of PageItem)()
-                parent.Childs.Add(item)
-            End If
-        End While
+    Public Sub OnClick(obj As Object)
+        MessageBox.Show("Click vào éo nào: " + obj.ToString)
     End Sub
+
+    Public Function CanClick(obj As Object) As Boolean
+
+        Return True
+
+    End Function
 End Class
