@@ -4,26 +4,27 @@ Imports WpfExamples
 Public Class MainMenuVM
     Inherits BaseVM
 
-    Dim MenuHelper As New MenuHelper
-    Dim MainMenu As New MainMenu
+    Dim MainMenuX As New MainMenuExam
+
+    Private _RootMenu As ObservableCollection(Of MainMenuExam)
 
     Public Sub New()
-        BuildMainMenuTree()
+        _RootMenu = New ObservableCollection(Of MainMenuExam)(MainMenuX.GenerateMenu())
     End Sub
 
-    Public ReadOnly Property RootsItems As List(Of MenuItems)
+    Public Property RootMenu As ObservableCollection(Of MainMenuExam)
         Get
-            Return MenuHelper.GetRootMenuItems()
+            Return _RootMenu
         End Get
+        Set(value As ObservableCollection(Of MainMenuExam))
+            _RootMenu = value
+        End Set
     End Property
+
+
 
 #Region " Build menu tree"
 
-    Private Sub BuildMainMenuTree()
-        For Each Item In MainMenu.ListMainMenu
-            MenuHelper.AddMenuItem(Item, Item.MenuParentId)
-        Next
-    End Sub
 #End Region
 
 #Region " Command"

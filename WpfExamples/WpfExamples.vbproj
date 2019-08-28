@@ -67,12 +67,21 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.9.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.9.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
@@ -99,6 +108,9 @@
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System" />
@@ -124,12 +136,34 @@
     <Compile Include="Helper\DBUtils.vb" />
     <Compile Include="Helper\MyBooleanToVisibilityConverter.vb" />
     <Compile Include="Model\MenuItems.vb" />
+    <Compile Include="ViewModel\AboutViewModel.vb" />
     <Compile Include="ViewModel\BaseVM.vb" />
-    <Compile Include="ViewModel\MainMenu.vb" />
-    <Compile Include="ViewModel\MenuHelper.vb" />
+    <Compile Include="ViewModel\HamburgerMenuVM.vb" />
+    <Compile Include="ViewModel\HomeViewModel.vb" />
+    <Compile Include="ViewModel\MainWindowVM.vb" />
+    <Compile Include="ViewModel\PrivateViewModel.vb" />
+    <Compile Include="ViewModel\SettingsViewModel.vb" />
+    <Compile Include="ViewModel\VMHelper\MainMenuExam.vb" />
+    <Compile Include="ViewModel\VMHelper\MenuHelper.vb" />
     <Compile Include="ViewModel\MainMenuVM.vb" />
-    <Compile Include="View\MainMenuDB.xaml.vb">
-      <DependentUpon>MainMenuDB.xaml</DependentUpon>
+    <Compile Include="ViewModel\VMHelper\SelectedItemToContentConverter.vb" />
+    <Compile Include="View\HamburgerMenu.xaml.vb">
+      <DependentUpon>HamburgerMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainMenuExample.xaml.vb">
+      <DependentUpon>MainMenuExample.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UcView\AboutView.xaml.vb">
+      <DependentUpon>AboutView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UcView\HomeView.xaml.vb">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UcView\PrivateView.xaml.vb">
+      <DependentUpon>PrivateView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UcView\SettingsView.xaml.vb">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -144,7 +178,27 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\MainMenuDB.xaml">
+    <Page Include="View\HamburgerMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainMenuExample.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UcView\AboutView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UcView\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UcView\PrivateView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UcView\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -211,6 +265,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="logo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.111.0\build\net46\System.Data.SQLite.Core.targets')" />
