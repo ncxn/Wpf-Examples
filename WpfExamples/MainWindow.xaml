@@ -31,7 +31,7 @@
     </Controls:MetroWindow.Resources>
     <!--Windows command: Min/Max/Close-->
     <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands >
+        <Controls:WindowCommands ShowSeparators="False">
             <Button Click="Button_Click">
                 <StackPanel Orientation="Horizontal" Cursor="Hand">
                     <materialDesign:PackIcon Kind="FileTree" />
@@ -55,15 +55,14 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition />
                 </Grid.RowDefinitions>
            
                 <Grid Grid.Row="0">
@@ -105,9 +104,53 @@
                 </Grid>
             </Grid>
         </Grid>
-        
+
         <Grid Grid.Row="1">
-            <TextBlock Text="Menu"></TextBlock>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <TextBlock Text="Data Grid" FontSize="36"></TextBlock>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal" >
+                        <StackPanel.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property ="Margin" Value="5,5,5,5"/>
+                                <Setter Property ="FontSize" Value="24"/>
+                                <Setter Property ="Width" Value="100"/>
+                                <Setter Property ="Height" Value="50"/>
+                                <Setter Property ="Cursor" Value="Hand"/>
+                                <Setter Property ="BorderBrush" Value="Transparent"/>
+                            </Style>
+                            
+                            <Style TargetType="materialDesign:PackIcon">
+                                <Setter Property ="Width" Value="50"/>
+                                <Setter Property ="Height" Value="50"/>
+                                <Setter Property ="Foreground" Value="SteelBlue"/>
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <Button
+                            Command="{Binding DataGridCmd}" 
+                            HorizontalAlignment="Left"
+                            ToolTip="Data Grid View">
+                            <materialDesign:PackIcon Kind="ViewGrid"/>
+                        </Button>
+
+                        <Button
+                            Command="{Binding ListViewCmd}"
+                            HorizontalAlignment="Left"
+                            ToolTip="ListView Example">
+                            <materialDesign:PackIcon Kind="FormatListBulleted"/>
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Controls:MetroWindow>

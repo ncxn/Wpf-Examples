@@ -136,6 +136,7 @@
     <Compile Include="Helper\DBUtils.vb" />
     <Compile Include="Helper\MyBooleanToVisibilityConverter.vb" />
     <Compile Include="Model\MenuItems.vb" />
+    <Compile Include="Model\UsersModel.vb" />
     <Compile Include="ViewModel\AboutViewModel.vb" />
     <Compile Include="ViewModel\BaseVM.vb" />
     <Compile Include="ViewModel\HamburgerMenuVM.vb" />
@@ -143,10 +144,15 @@
     <Compile Include="ViewModel\MainWindowVM.vb" />
     <Compile Include="ViewModel\PrivateViewModel.vb" />
     <Compile Include="ViewModel\SettingsViewModel.vb" />
+    <Compile Include="ViewModel\UsersVM.vb" />
     <Compile Include="ViewModel\VMHelper\MainMenuExam.vb" />
     <Compile Include="ViewModel\VMHelper\MenuHelper.vb" />
     <Compile Include="ViewModel\MainMenuVM.vb" />
     <Compile Include="ViewModel\VMHelper\SelectedItemToContentConverter.vb" />
+    <Compile Include="ViewModel\VMHelper\VisualTreeHelpers.vb" />
+    <Compile Include="View\DataGridView.xaml.vb">
+      <DependentUpon>DataGridView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\HamburgerMenu.xaml.vb">
       <DependentUpon>HamburgerMenu.xaml</DependentUpon>
     </Compile>
@@ -178,6 +184,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\DataGridView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\HamburgerMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
