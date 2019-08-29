@@ -40,7 +40,7 @@
                         <Button
                             ToolTip="Edit"
                             Command="{Binding EditCmd}"
-                            CommandParameter="{Binding IsSelected}">
+                            CommandParameter="{Binding SelectedItem}">
                             <materialDesign:PackIcon Kind="ModeEditOutline" />
                         </Button>
                         <Button
@@ -89,15 +89,16 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">
-            <DataGrid ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"
-                      Grid.Row="0"
+            <DataGrid Name ="DG" ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"
+                      Grid.Row="0" 
+                      Style="{DynamicResource AzureDataGrid}"
+                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger = PropertyChanged, Mode = OneWayToSource}"
                       AutoGenerateColumns="True">
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
                                             EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
                                             Header="IsSelected"
-                                            
-                                            Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                             />
                 </DataGrid.Columns>
             </DataGrid>
