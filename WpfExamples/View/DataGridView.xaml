@@ -5,6 +5,7 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:local="clr-namespace:WpfExamples"
+                       xmlns:ie="http://schemas.microsoft.com/expression/2010/interactivity" 
                        mc:Ignorable="d"
                        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                        BorderBrush="{DynamicResource AccentColorBrush}"
@@ -18,6 +19,7 @@
     <Controls:MetroWindow.WindowButtonCommands>
         <Controls:WindowButtonCommands Template="{DynamicResource MahApps.Metro.Templates.WindowButtonCommands.Win10}" />
     </Controls:MetroWindow.WindowButtonCommands>
+    
     <Window.DataContext>
         <local:UsersVM />
     </Window.DataContext>
@@ -40,7 +42,7 @@
                         <Button
                             ToolTip="Edit"
                             Command="{Binding EditCmd}"
-                            CommandParameter="{Binding SelectedItem}">
+                            CommandParameter="{Binding SelectedUser, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                             <materialDesign:PackIcon Kind="ModeEditOutline" />
                         </Button>
                         <Button
@@ -89,20 +91,28 @@
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">
-            <DataGrid Name ="DG" ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"
-                      Grid.Row="0" 
+            <DataGrid x:Name ="UsersDataGrid" 
+                      ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"   
                       Style="{DynamicResource AzureDataGrid}"
-                      SelectedItem="{Binding SelectedItem, UpdateSourceTrigger = PropertyChanged, Mode = OneWayToSource}"
-                      AutoGenerateColumns="True">
+                      SelectedItem="{Binding SelectedUser, UpdateSourceTrigger = PropertyChanged, Mode = TwoWay}"
+                      AutoGenerateColumns="True"
+                      SelectionMode="Extended">
+                
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn ElementStyle="{DynamicResource MetroDataGridCheckBox}"
-                                            EditingElementStyle="{DynamicResource MetroDataGridCheckBox}"
-                                            Header="IsSelected"
-                                            Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                                            />
+                    <DataGridCheckBoxColumn ElementStyle="{StaticResource  MetroDataGridCheckBox}"
+                                            EditingElementStyle="{StaticResource  MetroDataGridCheckBox}"
+                                            Binding="{Binding RelativeSource={RelativeSource AncestorType = DataGridRow}, Path= IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            >
+                        <DataGridCheckBoxColumn.Header>
+                            <CheckBox 
+                                Style="{StaticResource MetroCheckBox}"
+                                DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
+                                IsChecked="{Binding IsAllItemsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                VerticalAlignment="Center"/>
+                        </DataGridCheckBoxColumn.Header>
+                    </DataGridCheckBoxColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
     </Grid>
-
 </Controls:MetroWindow>

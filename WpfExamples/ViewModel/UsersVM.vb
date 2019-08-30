@@ -1,14 +1,15 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Data
-Imports WpfExamples
 
 Public Class UsersVM
     Inherits BaseVM
 
     Private _Users As ObservableCollection(Of UsersModel)
-    Private _isSelected As Boolean
-    Private _SelectedItem As UsersModel
+    Private _IsItemSelected As Boolean
+    Private _IsAllItemsSelected As Boolean
+    Private _SelectedUser As UsersModel
     Private _EditCmd As RelayCommand
+
     Public Sub New()
         LoadData()
     End Sub
@@ -32,49 +33,51 @@ Public Class UsersVM
         End Set
     End Property
 
-    Public Property IsSelected As Boolean
+    Public Property IsItemSelected As Boolean
         Get
-            Return _isSelected
+            Return _IsItemSelected
         End Get
         Set
-            If SetProperty(_isSelected, Value) Then
+            If SetProperty(_IsItemSelected, Value) Then
                 EditCmd.OnCanExecuteChanged()
             End If
-            OnPropertyChanged(NameOf(IsSelected))
+            OnPropertyChanged(NameOf(_IsItemSelected))
         End Set
     End Property
 
-    Public Property SelectedItem As UsersModel
+    Public Property IsAllItemsSelected As Boolean
         Get
-            Return _SelectedItem
+            Return _IsAllItemsSelected
         End Get
-        Set(value As UsersModel)
-            If SetProperty(_SelectedItem, value) Then
-                EditCmd.RaiseCanExecuteChanged()
+        Set(value As Boolean)
+            _IsAllItemsSelected = value
+            OnPropertyChanged(NameOf(IsAllItemsSelected))
+        End Set
+    End Property
+
+    Public Property SelectedUser As UsersModel
+        Get
+            Return _SelectedUser
+        End Get
+        Set
+            If SetProperty(_SelectedUser, Value) Then
+                EditCmd.OnCanExecuteChanged()
             End If
-            OnPropertyChanged(NameOf(SelectedItem))
+            OnPropertyChanged(NameOf(SelectedUser))
         End Set
     End Property
 
     Private Function CanEditUser(arg As Object) As Boolean
-        'If SelectedItem IsNot Nothing Then
-        '    Return True
-        'Else
-        '    Return False
-        'End If
-        'If arg IsNot Nothing Then
-        '    Return True
-        'Else
-        '    Return False
-        'End If
-        Return Not IsNothing(arg)
-        EditCmd.OnCanExecuteChanged()
+        If SelectedUser IsNot Nothing Then
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
     Private Sub EditUser(obj As Object)
         Dim u As UsersModel = TryCast(obj, UsersModel)
-        MessageBox.Show(u.UserName + ": " + IsSelected.ToString)
-
+        MessageBox.Show(u.UserName + ": " + IsItemSelected.ToString + ": " + IsAllItemsSelected.ToString)
     End Sub
 
 #Region " Get data of User"
@@ -90,7 +93,8 @@ Public Class UsersVM
                 .UserName = r(0),
                 .UserEmail = r(1),
                 .UserCreate_at = r(2),
-                .UserUpdate_at = r(3)
+                .UserUpdate_at = r(3),
+                .IsSelected = False
             }
             _Users.Add(user)
         Next
@@ -99,5 +103,13 @@ Public Class UsersVM
 
     End Function
 
+#End Region
+
+#Region " Additional"
+    Private Sub SelectAll()
+        For Each u In Users
+
+        Next
+    End Sub
 #End Region
 End Class

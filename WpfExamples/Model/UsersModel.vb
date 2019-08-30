@@ -3,7 +3,7 @@
     Private _UserEmail As String
     Private _UserCreate_at As Date
     Private _UserUpdate_at As Date
-
+    Private _IsSelected As Boolean
     Public Property UserName As String
         Get
             Return _UserName
@@ -37,6 +37,15 @@
         End Get
         Set(value As Date)
             _UserUpdate_at = value
+        End Set
+    End Property
+
+    Public Property IsSelected As Boolean
+        Get
+            Return _IsSelected
+        End Get
+        Set(value As Boolean)
+            _IsSelected = value
         End Set
     End Property
 End Class
