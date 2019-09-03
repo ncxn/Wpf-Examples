@@ -5,7 +5,7 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:local="clr-namespace:WpfExamples"
-                       xmlns:ie="http://schemas.microsoft.com/expression/2010/interactivity" 
+                       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
                        mc:Ignorable="d"
                        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
                        BorderBrush="{DynamicResource AccentColorBrush}"
@@ -46,7 +46,8 @@
                             <materialDesign:PackIcon Kind="ModeEditOutline" />
                         </Button>
                         <Button
-                            ToolTip="Delele">
+                            ToolTip="Delele"
+                            Command="{Binding DeleteCmd}">
                             <materialDesign:PackIcon Kind="Delete" />
                         </Button>
                         <Button
@@ -95,22 +96,35 @@
                       ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"   
                       Style="{DynamicResource AzureDataGrid}"
                       SelectedItem="{Binding SelectedUser, UpdateSourceTrigger = PropertyChanged, Mode = TwoWay}"
-                      AutoGenerateColumns="True"
+                      AutoGenerateColumns="False"
                       SelectionMode="Extended">
-                
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction CommandParameter="{Binding ElementName=UsersDataGrid, Path=SelectedItems}" Command="{Binding SelectedUsersCmd }" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn ElementStyle="{StaticResource  MetroDataGridCheckBox}"
-                                            EditingElementStyle="{StaticResource  MetroDataGridCheckBox}"
-                                            Binding="{Binding RelativeSource={RelativeSource AncestorType = DataGridRow}, Path= IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            >
+                    <DataGridCheckBoxColumn
+                        Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
+                        EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
                         <DataGridCheckBoxColumn.Header>
-                            <CheckBox 
-                                Style="{StaticResource MetroCheckBox}"
-                                DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
-                                IsChecked="{Binding IsAllItemsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                VerticalAlignment="Center"/>
+                            <!--padding to allow hit test to pass thru for sorting -->
+                            <Border
+                                Background="Transparent"
+                                Padding="6 0 6 0"
+                                HorizontalAlignment="Center">
+                                <CheckBox
+                                    HorizontalAlignment="Center"
+                                    DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
+                                    IsChecked="{Binding IsAllItemsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                            </Border>
                         </DataGridCheckBoxColumn.Header>
                     </DataGridCheckBoxColumn>
+                    <DataGridTextColumn Binding="{Binding UserName}" Header="User Name"/>
+                    <DataGridTextColumn Binding="{Binding UserEmail, UpdateSourceTrigger=PropertyChanged}" Header="Email"/>
+                    <DataGridTextColumn Binding="{Binding UserCreate_at, UpdateSourceTrigger=PropertyChanged}" Header="Create At"/>
+                    <DataGridTextColumn Binding="{Binding UserUpdate_at, UpdateSourceTrigger=PropertyChanged}" Header="Update At"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

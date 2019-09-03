@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Data
+Imports WpfExamples
 
 Public Class UsersVM
     Inherits BaseVM
@@ -7,12 +8,61 @@ Public Class UsersVM
     Private _Users As ObservableCollection(Of UsersModel)
     Private _IsItemSelected As Boolean
     Private _IsAllItemsSelected As Boolean
+    Private _SelectedUsers As ObservableCollection(Of UsersModel)
     Private _SelectedUser As UsersModel
+
+    Private _SelectedUsersCmd As RelayCommand
+    Private _SelectAllUsersCmd As RelayCommand
     Private _EditCmd As RelayCommand
+    Private _DeleteCmd As RelayCommand
 
     Public Sub New()
         LoadData()
     End Sub
+
+#Region " Command Properties"
+
+    Public Property SelectedUsersCmd As RelayCommand
+        Get
+            Return If(_SelectedUsersCmd, New RelayCommand(AddressOf SelectUsers))
+        End Get
+        Set(value As RelayCommand)
+            _SelectedUsersCmd = value
+            OnPropertyChanged(NameOf(SelectedUsersCmd))
+        End Set
+    End Property
+
+    'Public Property SelectAllUsersCmd As RelayCommand
+    '    Get
+    '        Return If(_SelectAllUsersCmd, New RelayCommand(AddressOf SelectAllUsers))
+    '    End Get
+    '    Set(value As RelayCommand)
+    '        _SelectAllUsersCmd = value
+    '        OnPropertyChanged(NameOf(SelectedUsersCmd))
+    '    End Set
+    'End Property
+
+    Public Property EditCmd As RelayCommand
+        Get
+            Return If(_EditCmd, New RelayCommand(AddressOf EditUser, AddressOf CanEditUser))
+        End Get
+        Set(value As RelayCommand)
+            _EditCmd = value
+        End Set
+    End Property
+
+    Public Property DeleteCmd As RelayCommand
+        Get
+            Return If(_DeleteCmd, New RelayCommand(AddressOf DeleteUser, AddressOf CanDeleteUser))
+        End Get
+        Set(value As RelayCommand)
+            _DeleteCmd = value
+        End Set
+    End Property
+
+#End Region
+
+#Region " Properties"
 
     Public Property Users As ObservableCollection(Of UsersModel)
         Get
@@ -24,12 +74,13 @@ Public Class UsersVM
         End Set
     End Property
 
-    Public Property EditCmd As RelayCommand
+    Public Property SelectedUsers As ObservableCollection(Of UsersModel)
         Get
-            Return If(_EditCmd, New RelayCommand(AddressOf EditUser, AddressOf CanEditUser))
+            Return _SelectedUsers
         End Get
-        Set(value As RelayCommand)
-            _EditCmd = value
+        Set(value As ObservableCollection(Of UsersModel))
+            _SelectedUsers = value
+            OnPropertyChanged(NameOf(SelectedUsers))
         End Set
     End Property
 
@@ -41,7 +92,7 @@ Public Class UsersVM
             If SetProperty(_IsItemSelected, Value) Then
                 EditCmd.OnCanExecuteChanged()
             End If
-            OnPropertyChanged(NameOf(_IsItemSelected))
+            OnPropertyChanged(NameOf(IsItemSelected))
         End Set
     End Property
 
@@ -49,8 +100,9 @@ Public Class UsersVM
         Get
             Return _IsAllItemsSelected
         End Get
-        Set(value As Boolean)
+        Set(ByVal value As Boolean)
             _IsAllItemsSelected = value
+            SelectAllUsers(value, Users)
             OnPropertyChanged(NameOf(IsAllItemsSelected))
         End Set
     End Property
@@ -67,6 +119,11 @@ Public Class UsersVM
         End Set
     End Property
 
+
+#End Region
+
+#Region " The Sub/Funtions"
+
     Private Function CanEditUser(arg As Object) As Boolean
         If SelectedUser IsNot Nothing Then
             Return True
@@ -77,8 +134,39 @@ Public Class UsersVM
 
     Private Sub EditUser(obj As Object)
         Dim u As UsersModel = TryCast(obj, UsersModel)
-        MessageBox.Show(u.UserName + ": " + IsItemSelected.ToString + ": " + IsAllItemsSelected.ToString)
+        MessageBox.Show("Do you edit " + u.UserName + " ?")
     End Sub
+
+    Private Function CanDeleteUser(arg As Object) As Boolean
+        Return True
+    End Function
+
+    Private Sub DeleteUser(obj As Object)
+        Dim s As String = String.Empty
+        For Each u In SelectedUsers.ToList
+            s = s + " + " + u.UserName
+            Users.Remove(u)
+            SelectedUsers.Remove(u)
+        Next
+        MessageBox.Show(s)
+    End Sub
+
+    Private Sub SelectUsers(obj As Object)
+        Dim items As IList = CType(obj, IList)
+        _SelectedUsers = New ObservableCollection(Of UsersModel)(items.Cast(Of UsersModel)())
+    End Sub
+
+    Private Sub SelectAllUsers(value As Boolean, models As ObservableCollection(Of UsersModel))
+        For Each u In models
+            u.IsSelected = value
+        Next
+        For Each u In Users
+            Debug.WriteLine(u.IsSelected)
+        Next
+        OnPropertyChanged(IsItemSelected)
+    End Sub
+
+#End Region
 
 #Region " Get data of User"
 
@@ -93,9 +181,8 @@ Public Class UsersVM
                 .UserName = r(0),
                 .UserEmail = r(1),
                 .UserCreate_at = r(2),
-                .UserUpdate_at = r(3),
-                .IsSelected = False
-            }
+                .UserUpdate_at = r(3)
+             }
             _Users.Add(user)
         Next
 
@@ -105,11 +192,4 @@ Public Class UsersVM
 
 #End Region
 
-#Region " Additional"
-    Private Sub SelectAll()
-        For Each u In Users
-
-        Next
-    End Sub
-#End Region
 End Class
