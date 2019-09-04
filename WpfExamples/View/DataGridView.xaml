@@ -93,19 +93,45 @@
         </Grid>
         <Grid Grid.Row="1">
             <DataGrid x:Name ="UsersDataGrid" 
-                      ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"   
                       Style="{DynamicResource AzureDataGrid}"
-                      SelectedItem="{Binding SelectedUser, UpdateSourceTrigger = PropertyChanged, Mode = TwoWay}"
                       AutoGenerateColumns="False"
-                      SelectionMode="Extended">
+                      SelectionMode="Extended"
+                      ItemsSource="{Binding Path=Users, UpdateSourceTrigger=PropertyChanged}"   
+                      SelectedItem="{Binding SelectedUser, UpdateSourceTrigger = PropertyChanged, Mode = TwoWay}"
+                      >
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction CommandParameter="{Binding ElementName=UsersDataGrid, Path=SelectedItems}" Command="{Binding SelectedUsersCmd }" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                        <Style.Triggers>
+                            <!-- Order of these triggers matter as the last one will take precedence-->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="LightBlue" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Azure" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.CellStyle>
+                    <!-- When the cell is selected, switching to transparent to let the row's Background be visible-->
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn
-                        Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=IsSelected, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                        Binding="{Binding Path=IsSelected, Mode=TwoWay,
+                        RelativeSource={RelativeSource FindAncestor,
+                        AncestorType={x:Type DataGridRow}}}"
                         ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
                         EditingElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnEditingStyle}">
                         <DataGridCheckBoxColumn.Header>
@@ -114,10 +140,7 @@
                                 Background="Transparent"
                                 Padding="6 0 6 0"
                                 HorizontalAlignment="Center">
-                                <CheckBox
-                                    HorizontalAlignment="Center"
-                                    DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext}"
-                                    IsChecked="{Binding IsAllItemsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_UnChecked" IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.IsAllItemsSelected}" Content=""/>
                             </Border>
                         </DataGridCheckBoxColumn.Header>
                     </DataGridCheckBoxColumn>

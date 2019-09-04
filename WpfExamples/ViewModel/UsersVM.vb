@@ -6,10 +6,9 @@ Public Class UsersVM
     Inherits BaseVM
 
     Private _Users As ObservableCollection(Of UsersModel)
-    Private _IsItemSelected As Boolean
-    Private _IsAllItemsSelected As Boolean
     Private _SelectedUsers As ObservableCollection(Of UsersModel)
     Private _SelectedUser As UsersModel
+    Private _IsAllItemsSelected As Boolean
 
     Private _SelectedUsersCmd As RelayCommand
     Private _SelectAllUsersCmd As RelayCommand
@@ -18,6 +17,7 @@ Public Class UsersVM
 
     Public Sub New()
         LoadData()
+        _SelectedUsers = New ObservableCollection(Of UsersModel)
     End Sub
 
 #Region " Command Properties"
@@ -32,15 +32,15 @@ Public Class UsersVM
         End Set
     End Property
 
-    'Public Property SelectAllUsersCmd As RelayCommand
-    '    Get
-    '        Return If(_SelectAllUsersCmd, New RelayCommand(AddressOf SelectAllUsers))
-    '    End Get
-    '    Set(value As RelayCommand)
-    '        _SelectAllUsersCmd = value
-    '        OnPropertyChanged(NameOf(SelectedUsersCmd))
-    '    End Set
-    'End Property
+    Public Property SelectAllUsersCmd As RelayCommand
+        Get
+            Return If(_SelectAllUsersCmd, New RelayCommand(AddressOf SelectAllUsers))
+        End Get
+        Set(value As RelayCommand)
+            _SelectAllUsersCmd = value
+            OnPropertyChanged(NameOf(SelectedUsersCmd))
+        End Set
+    End Property
 
     Public Property EditCmd As RelayCommand
         Get
@@ -78,32 +78,35 @@ Public Class UsersVM
         Get
             Return _SelectedUsers
         End Get
-        Set(value As ObservableCollection(Of UsersModel))
-            _SelectedUsers = value
+        Set
+            If SetProperty(_SelectedUsers, Value) Then
+                DeleteCmd.OnCanExecuteChanged()
+            End If
             OnPropertyChanged(NameOf(SelectedUsers))
         End Set
     End Property
 
-    Public Property IsItemSelected As Boolean
-        Get
-            Return _IsItemSelected
-        End Get
-        Set
-            If SetProperty(_IsItemSelected, Value) Then
-                EditCmd.OnCanExecuteChanged()
-            End If
-            OnPropertyChanged(NameOf(IsItemSelected))
-        End Set
-    End Property
 
     Public Property IsAllItemsSelected As Boolean
         Get
             Return _IsAllItemsSelected
         End Get
         Set(ByVal value As Boolean)
+            If value = True Then
+
+                For Each u In Users
+                    u.IsSelected = True
+                Next
+            ElseIf value = False Then
+
+                For Each u In Users
+                    u.IsSelected = False
+                Next
+            End If
+
             _IsAllItemsSelected = value
-            SelectAllUsers(value, Users)
             OnPropertyChanged(NameOf(IsAllItemsSelected))
+            OnPropertyChanged(NameOf(Users))
         End Set
     End Property
 
@@ -138,7 +141,11 @@ Public Class UsersVM
     End Sub
 
     Private Function CanDeleteUser(arg As Object) As Boolean
-        Return True
+        If SelectedUsers.Count > 0 Or SelectedUsers Is Nothing Then
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
     Private Sub DeleteUser(obj As Object)
@@ -153,17 +160,19 @@ Public Class UsersVM
 
     Private Sub SelectUsers(obj As Object)
         Dim items As IList = CType(obj, IList)
-        _SelectedUsers = New ObservableCollection(Of UsersModel)(items.Cast(Of UsersModel)())
+        Try
+            _SelectedUsers = New ObservableCollection(Of UsersModel)(items.Cast(Of UsersModel)())
+        Catch ex As Exception
+        End Try
+
     End Sub
 
-    Private Sub SelectAllUsers(value As Boolean, models As ObservableCollection(Of UsersModel))
-        For Each u In models
-            u.IsSelected = value
+    Private Sub SelectAllUsers(Obj As Object)
+        Dim users As ObservableCollection(Of UsersModel) = TryCast(Obj, ObservableCollection(Of UsersModel))
+
+        For Each u In users
+
         Next
-        For Each u In Users
-            Debug.WriteLine(u.IsSelected)
-        Next
-        OnPropertyChanged(IsItemSelected)
     End Sub
 
 #End Region
@@ -181,7 +190,8 @@ Public Class UsersVM
                 .UserName = r(0),
                 .UserEmail = r(1),
                 .UserCreate_at = r(2),
-                .UserUpdate_at = r(3)
+                .UserUpdate_at = r(3),
+                .IsSelected = True
              }
             _Users.Add(user)
         Next
